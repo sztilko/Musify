@@ -13,3 +13,14 @@ The application should work in the following way:
 2. When the recording phase is over, the recorded sample is played back on a selected instrument.
 3. The following recording sessions should go in parallel with the playback of the yet recorded samples.
 4. The final samples should be exported in a common audio format.
+
+## Required packages
+- numpy
+- SoundCard
+
+_Creating virtual environment for running_:
+
+`conda create -n musify python=3.6` \
+`conda activate musify` \
+`conda install numpy` \
+`pip install SoundCard`
