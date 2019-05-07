@@ -16,11 +16,13 @@ The application should work in the following way:
 
 ## Required packages
 - numpy
-- SoundCard
+- SoundCard (for audio recording)
+- librosa (for audio processing)
 
 _Creating virtual environment for running_:
 
 `conda create -n musify python=3.6` \
 `conda activate musify` \
 `conda install numpy` \
-`pip install SoundCard`
+`pip install SoundCard` \
+`conda install -c conda-forge librosa`
