@@ -44,9 +44,9 @@ class MIDIPlayer:
                 if midi_seq[idx+1] == note:
                     pass  # If the next note is the same, keep holding it down
                 else:
-                    self.player.note_off(note, 127)
+                    self.player.note_on(note, 0)
             else:
-                self.player.note_off(note, 127)
+                self.player.note_on(note, 0)
 
 
 # pygame.mixer.music.load("gf.mid")
