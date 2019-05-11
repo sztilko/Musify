@@ -27,7 +27,8 @@ idxs = magnitudes.argmax(axis=0)
 print(f"Shape of idxs: {idxs.shape}")
 
 p = [pitches[idx, t] for t, idx in enumerate(idxs)]
-p = librosa.core.hz_to_midi(p)
+p = librosa.core.hz_to_note(p)
+p = librosa.core.note_to_midi(p)
 
 print(len(p))
 plt.figure(figsize=(12, 6))
