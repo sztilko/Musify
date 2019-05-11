@@ -1,5 +1,5 @@
 import numpy as np
-import soundcard as sc
+import sounddevice as sd
 import matplotlib
 matplotlib.use("TKAgg")
 import matplotlib.pyplot as plt
@@ -7,25 +7,26 @@ import librosa
 import pygame
 import time
 
+#set initial parameters
+sample_rate = 41000  # sampling rate in Hz
+record_time = 5  # record time in seconds
+sd.default.samplerate = sample_rate
+sd.default.channels = 1
+pygame.mixer.init(buffer=1024)  # initialize pygame mixer
+beep = pygame.mixer.Sound("Sounds/record_beep.wav")  # set beep sound
 
-speaker = sc.default_speaker()
-mic = sc.default_microphone()
-
-sample_rate = 41000
-# give record time in seconds!
-record_time = 5
-t = np.linspace(0, record_time, sample_rate*record_time)
+t = np.linspace(0, record_time, sample_rate*record_time)  # create time vector
 
 # record data into a np.array
 print('Record on!')
-signal = mic.record(samplerate=sample_rate, numframes=sample_rate * record_time)
+beep.play()
+time.sleep(beep.get_length()*3)  #3*times the length of the beep sound to prevent overlap with recording
+signal = sd.rec(sample_rate * record_time)
+time.sleep(record_time)
 print('Record off!')
-signal = np.delete(signal, 1, 1)  # delete redundant second channel of recording (mono recording)
+beep.play()
+time.sleep(beep.get_length())
 signal = np.squeeze(signal)  # remove singleton dimension
-
-# play sample
-# speaker.play(signal / np.max(signal), samplerate=sample_rate)
-# print("Playback Done!")
 
 # extract onset peaks from signal
 onsets = librosa.onset.onset_detect(signal, sample_rate, units='time')
@@ -39,9 +40,6 @@ for onset_t in onsets:
 # plt.show()
 
 # play snares at times of snaps
-
-#initialize snare properties
-pygame.mixer.init(buffer=1024)
 snare = pygame.mixer.Sound("Sounds/snare.wav")  # set snare sound
 print('Time instances of snaps: ' + str(onsets))
 
