@@ -1,26 +1,38 @@
 import librosa
 import numpy as np
+import sounddevice as sd
+import matplotlib
+matplotlib.use("TKAgg")
+import matplotlib.pyplot as plt
 
 
-def detect_pitch(y, sr, t):
-    """
-     Pick the pitch at a certain frame 't' is simple. First getting the bin of the strongest frequency by looking at
-     the magnitudes array, and then finding the pitch at pitches[index, t]
+fs = 41000
 
-    :param y: audio time series
-    :param sr: sampling rate
-    :param t: time frame at which the pitch is required
-    :return: The pitch at given timepoint
-    """
+duration = 5  # seconds
+signal = sd.rec(int(duration * fs), samplerate=fs, channels=1)
+print("Record on...")
+sd.wait()
+sd.play(signal, fs)
+print("Playback...")
+sd.wait()
 
-    pitches, magnitudes = librosa.core.piptrack(y=y, sr=sr, fmin=75, fmax=1600)
-    index = magnitudes[:, t].argmax()
-    pitch = pitches[index, t]
+signal = np.squeeze(signal)
+t = np.linspace(0, duration, len(signal))
 
-    return pitch
+pitches, magnitudes = librosa.core.piptrack(y=signal, sr=fs, fmin=500, fmax=5000)
 
-# y, sr = librosa.load(filename, sr=40000)
+print(pitches.shape, magnitudes.shape)
 
-# np.set_printoptions(threshold=np.nan)
-# print pitches[np.nonzero(pitches)]
+idxs = magnitudes.argmax(axis=0)
+print(f"Shape of idxs: {idxs.shape}")
+
+p = [pitches[idx, t] for t, idx in enumerate(idxs)]
+
+
+print(len(p))
+plt.figure(figsize=(12, 6))
+plt.plot(p, '.')
+plt.show()
+
+
 
