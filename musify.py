@@ -4,13 +4,16 @@ import matplotlib
 matplotlib.use("TKAgg")
 import matplotlib.pyplot as plt
 import librosa
+import pygame
+import time
+
 
 speaker = sc.default_speaker()
 mic = sc.default_microphone()
 
 sample_rate = 41000
 # give record time in seconds!
-record_time = 3
+record_time = 5
 t = np.linspace(0, record_time, sample_rate*record_time)
 
 # record data into a np.array
@@ -21,16 +24,38 @@ signal = np.delete(signal, 1, 1)  # delete redundant second channel of recording
 signal = np.squeeze(signal)  # remove singleton dimension
 
 # play sample
-speaker.play(signal / np.max(signal), samplerate=sample_rate)
-print("Playback Done!")
+# speaker.play(signal / np.max(signal), samplerate=sample_rate)
+# print("Playback Done!")
 
 # extract onset peaks from signal
-onsets=librosa.onset.onset_detect(signal,sample_rate,units='time')
+onsets = librosa.onset.onset_detect(signal, sample_rate, units='time')
 
 plt.figure(figsize=(12, 6))
-plt.plot(t,signal)
+plt.plot(t, signal)
 plt.title("Audio signal")
 plt.xlabel("frame")
 for onset_t in onsets:
-    plt.axvline(onset_t,color='r')
-plt.show()
+    plt.axvline(onset_t, color='r')
+# plt.show()
+
+# play snares at times of snaps
+
+#initialize snare properties
+pygame.mixer.init(buffer=1024)
+snare = pygame.mixer.Sound("Sounds/snare.wav")  # set snare sound
+print('Time instances of snaps: ' + str(onsets))
+
+delays = np.array(onsets[0])
+for counter, value in enumerate(onsets):
+    if counter > 0:
+        delays = np.append(delays, value-onsets[counter-1])
+    if counter == len(onsets)-1:
+        delays = np.append(delays, record_time - onsets[counter])
+print('Delay times: ' + str(delays))
+
+for interval in delays:
+    if interval == delays[-1]:
+        break
+    time.sleep(interval)
+    snare.play()
+time.sleep(snare.get_length())  # last sleep is needed to keep the program running so it is not shut down until sound is playing
