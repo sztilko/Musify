@@ -7,8 +7,14 @@ class MIDIPlayer:
     def __init__(self):
         pygame.init()
         midi.init()
-        self.device = midi.get_default_output_id()
+        device = midi.get_default_output_id()
+        self.player = midi.Output(device)
         print("Default MIDI device found: " + str(midi.get_default_output_id()))
+
+    def __del__(self):
+        self.player.close()
+        del self.player
+        pygame.midi.quit()
 
     @staticmethod
     def list_all_midi_devices():
@@ -29,13 +35,11 @@ class MIDIPlayer:
         step = duration/n   # duration of a note
 
         output = midi.Output(self.device)
-        output.set_instrument(10)
+        self.player.set_instrument(with_instrument)
 
         for idx, note in enumerate(midi_seq):
             output.note_on(int(note), 123)
             time.sleep(step)
         output.close()
 
-# pygame.mixer.music.load("gf.mid")
-# pygame.mixer.music.play()
 
