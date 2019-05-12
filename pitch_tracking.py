@@ -49,5 +49,5 @@ plt.title('Thresholded and rounded MIDI notes')
 #plt.show()
 
 mp = MIDIPlayer()
-mp.play_midi_sequence(p, duration)
+mp.play_midi_sequence(p, duration, 7)
 
