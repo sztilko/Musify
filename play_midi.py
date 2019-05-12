@@ -1,6 +1,7 @@
+import time
+import numpy as np
 import pygame
 from pygame import midi
-import time
 
 
 class MIDIPlayer:
@@ -15,7 +16,7 @@ class MIDIPlayer:
         for x in range(0, pygame.midi.get_count()):
             print(pygame.midi.get_device_info(x))
 
-    def play_midi_sequence(self, midi_seq, duration, with_instrument=0):
+    def play_midi_sequence(self, midi_input, duration, with_instrument=0):
         """
         Plays the given MIDI sequence
 
@@ -25,15 +26,21 @@ class MIDIPlayer:
         :return: plays the midi notes on given instrument
         """
 
-        n = len(midi_seq)
-        step = duration/n   # duration of a note
-
-        output = midi.Output( self.device )
+        output = midi.Output(self.device)
         output.set_instrument(with_instrument)
+        scale_factor=duration/np.sum(midi_input[2][:])
 
-        for idx, note in enumerate(midi_seq):
-            output.note_on(int(note), 123)
-            time.sleep(step)
+        for step in range(midi_input.shape[1]):
+            note = midi_input[0][step]
+            velocity = midi_input[1][step]
+            sleep_time = midi_input[2][step]
+            if note == 0:
+                output.note_on(note, 0)
+                time.sleep(sleep_time * scale_factor)
+            else:
+                output.note_on(note, velocity)
+                time.sleep(sleep_time*scale_factor)
+                output.note_off(note)
         output.close()
 
 
