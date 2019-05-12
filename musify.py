@@ -9,7 +9,7 @@ import time
 
 #set initial parameters
 sample_rate = 41000  # sampling rate in Hz
-record_time = 5  # record time in seconds
+record_time = 4  # record time in seconds
 sd.default.samplerate = sample_rate
 sd.default.channels = 1
 pygame.mixer.init(buffer=1024)  # initialize pygame mixer
@@ -21,8 +21,7 @@ t = np.linspace(0, record_time, sample_rate*record_time)  # create time vector
 print('Record on!')
 beep.play()
 time.sleep(beep.get_length()*3)  #3*times the length of the beep sound to prevent overlap with recording
-signal = sd.rec(sample_rate * record_time)
-time.sleep(record_time)
+signal = sd.rec(sample_rate * record_time, blocking=True)
 print('Record off!')
 beep.play()
 time.sleep(beep.get_length())
