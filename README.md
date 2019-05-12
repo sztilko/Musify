@@ -20,9 +20,9 @@ The application should work in the following way:
 - pyGame (for midi playback)
 - librosa (for audio processing)
 
-_Creating virtual environment for running (linux)_:
+_Creating virtual environment for running (conda)_:
 
-`conda create -n musify python=3.6` \
+`conda create -n musify python=3.7` \
 `conda activate musify` \
 `conda install numpy` \
 `pip install sounddevice` \

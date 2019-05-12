@@ -7,6 +7,14 @@ from threading import Thread
 
 class Drum(Thread):
     def __init__(self, signal, sampling_rate, recording_time):
+        """
+        Drum class
+        Transforms the audio snaps signal into MIDI format, and plays back as Drum
+
+        :param signal: whistle audio signal
+        :param sampling_rate: the sampling rate of the recording in Hz
+        :param recording_time: recording duration
+        """
         Thread.__init__(self)
         print()
         print("------------------------")
@@ -36,9 +44,11 @@ class Drum(Thread):
         self.delays = delays
 
     def run(self):
+        print("Playing drum...")
         for interval in self.delays:
             if interval == self.delays[-1]:
                 break
             time.sleep(interval)
             self.snare.play()
         time.sleep(self.snare.get_length())
+        print("Drum finished!")
